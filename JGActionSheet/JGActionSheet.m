@@ -513,7 +513,7 @@ static BOOL disableCustomEasing = NO;
 @implementation JGActionSheet
 
 @dynamic visible;
-@synthesize fullWidthiPad;
+@synthesize fullWidthiPad, iPadWidth;
 
 #pragma mark Initializers
 
@@ -531,8 +531,9 @@ static BOOL disableCustomEasing = NO;
         tap.delegate = self;
         
         [self addGestureRecognizer:tap];
-        
+
         fullWidthiPad = NO;
+        iPadWidth = 0;
         
         _scrollViewHost = [[JGActionSheetView alloc] init];
         _scrollViewHost.backgroundColor = [UIColor clearColor];
@@ -780,7 +781,7 @@ static BOOL disableCustomEasing = NO;
     
     if (iPad) {
         CGFloat width = self.fullWidthiPad ? self.frame.size.width - 40 : kFixedWidth;
-        
+        if (iPadWidth > 0) width = iPadWidth;
         frame.origin.x = (CGRectGetWidth(frame)-width)/2.0f;
         
         frame.size.width = width;
