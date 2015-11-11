@@ -161,6 +161,8 @@ typedef NS_ENUM(NSUInteger, JGActionSheetArrowDirection) {
  A feature rich replacement for UIActionSheet.
  */
 @interface JGActionSheet : UIView
+ 
+@property (nonatomic) BOOL fullWidthiPad;
 
 /**
  The view in which the action sheet is presented.
