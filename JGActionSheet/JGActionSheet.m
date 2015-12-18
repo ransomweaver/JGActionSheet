@@ -47,9 +47,9 @@
 #define iPad (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
 #endif
 
-#define kHostsCornerRadius 3.0f
+#define kHostsCornerRadius 10.0f
 
-#define kSpacing 5.0f
+#define kSpacing 4.0f
 
 #define kArrowBaseWidth 20.0f
 #define kArrowHeight 10.0f
@@ -63,16 +63,6 @@
 #define kAnimationDurationForSectionCount(count) MAX(0.22f, MIN(count*0.12f, 0.45f))
 
 #pragma mark - Helpers
-
-@interface JGButton : UIButton
-
-@property (nonatomic, assign) NSUInteger row;
-
-@end
-
-@implementation JGButton
-
-@end
 
 NS_INLINE UIBezierPath *trianglePath(CGRect rect, JGActionSheetArrowDirection arrowDirection, BOOL closePath) {
     UIBezierPath *path = [UIBezierPath bezierPath];
@@ -188,8 +178,6 @@ static BOOL disableCustomEasing = NO;
 
 @interface JGActionSheetSection ()
 
-@property (nonatomic, assign) NSUInteger index;
-
 @property (nonatomic, copy) void (^buttonPressedBlock)(NSIndexPath *indexPath);
 
 - (void)setUpForContinuous:(BOOL)continuous;
@@ -242,14 +230,31 @@ static BOOL disableCustomEasing = NO;
             [self addSubview:_messageLabel];
         }
         
+        JGActionSheetButtonRowType rowType = JGActionSheetButtonRowTypeSolitary;
+        
+        if (message || title) {
+            if (buttonTitles.count > 1) {
+                rowType = JGActionSheetButtonRowTypeMedial;
+            } else {
+                rowType = JGActionSheetButtonRowTypeFinal;
+            }
+        } else if (buttonTitles.count > 1) {
+            rowType = JGActionSheetButtonRowTypeInitial;
+        }
+        
         if (buttonTitles.count) {
             NSMutableArray *buttons = [NSMutableArray arrayWithCapacity:buttonTitles.count];
             
             NSInteger index = 0;
             
             for (NSString *str in buttonTitles) {
-                JGButton *b = [self makeButtonWithTitle:str style:buttonStyle];
-                b.row = (NSUInteger)index;
+                if (index == buttonTitles.count-1 && index != 0) {
+                    rowType = JGActionSheetButtonRowTypeFinal;
+                } else if (index > 0) {
+                    rowType = JGActionSheetButtonRowTypeMedial;
+                }
+                UIButton *b = [self makeButtonWithTitle:str style:buttonStyle rowType:rowType];
+                b.tag = index;
                 
                 [self addSubview:b];
                 
@@ -357,22 +362,24 @@ static BOOL disableCustomEasing = NO;
 }
 
 - (void)setButtonStyle:(JGActionSheetButtonStyle)buttonStyle forButton:(UIButton *)button {
-    UIColor *backgroundColor, *borderColor, *titleColor = nil;
+    UIColor *backgroundColor, *borderColor, *titleColor, *highlightColor = nil;
     UIFont *font = nil;
     
     if (buttonStyle == JGActionSheetButtonStyleDefault) {
         font = [UIFont systemFontOfSize:15.0f];
-        titleColor = [UIColor blackColor];
+        titleColor = [UIColor blueColor];
         
-        backgroundColor = [UIColor colorWithWhite:0.95f alpha:1.0f];
-        borderColor = [UIColor colorWithWhite:0.9f alpha:1.0f];
+        backgroundColor = [UIColor whiteColor];
+        borderColor = [UIColor clearColor];
+        highlightColor = [UIColor colorWithRed:0.988 green:0.902 blue:0.902 alpha:1];
     }
     else if (buttonStyle == JGActionSheetButtonStyleCancel) {
         font = [UIFont boldSystemFontOfSize:15.0f];
-        titleColor = [UIColor blackColor];
+        titleColor = [UIColor blueColor];
         
-        backgroundColor = [UIColor colorWithWhite:0.95f alpha:1.0f];
-        borderColor = [UIColor colorWithWhite:0.9f alpha:1.0f];
+        backgroundColor = [UIColor whiteColor];
+        borderColor = [UIColor clearColor];
+        highlightColor = [UIColor colorWithRed:0.988 green:0.902 blue:0.902 alpha:1];
     }
     else if (buttonStyle == JGActionSheetButtonStyleRed) {
         font = [UIFont systemFontOfSize:15.0f];
@@ -380,6 +387,7 @@ static BOOL disableCustomEasing = NO;
         
         backgroundColor = rgb(231.0f, 76.0f, 60.0f);
         borderColor = rgb(192.0f, 57.0f, 43.0f);
+        highlightColor = borderColor;
     }
     else if (buttonStyle == JGActionSheetButtonStyleGreen) {
         font = [UIFont systemFontOfSize:15.0f];
@@ -387,6 +395,7 @@ static BOOL disableCustomEasing = NO;
         
         backgroundColor = rgb(46.0f, 204.0f, 113.0f);
         borderColor = rgb(39.0f, 174.0f, 96.0f);
+        highlightColor = borderColor;
     }
     else if (buttonStyle == JGActionSheetButtonStyleBlue) {
         font = [UIFont systemFontOfSize:15.0f];
@@ -394,6 +403,7 @@ static BOOL disableCustomEasing = NO;
         
         backgroundColor = rgb(52.0f, 152.0f, 219.0f);
         borderColor = rgb(41.0f, 128.0f, 185.0f);
+        highlightColor = borderColor;
     }
     
     [button setTitleColor:titleColor forState:UIControlStateNormal];
@@ -401,17 +411,21 @@ static BOOL disableCustomEasing = NO;
     button.titleLabel.font = font;
     
     [button setBackgroundImage:[self pixelImageWithColor:backgroundColor] forState:UIControlStateNormal];
-    [button setBackgroundImage:[self pixelImageWithColor:borderColor] forState:UIControlStateHighlighted];
+    [button setBackgroundImage:[self pixelImageWithColor:highlightColor] forState:UIControlStateHighlighted];
     
     button.layer.borderColor = borderColor.CGColor;
 }
 
-- (JGButton *)makeButtonWithTitle:(NSString *)title style:(JGActionSheetButtonStyle)style {
-    JGButton *b = [[JGButton alloc] init];
+- (UIButton *)makeButtonWithTitle:(NSString *)title style:(JGActionSheetButtonStyle)style rowType:(JGActionSheetButtonRowType)rowType {
+    UIButton *b = [UIButton buttonWithType:UIButtonTypeCustom];
     
-    b.layer.cornerRadius = 2.0f;
+    if (rowType == JGActionSheetButtonRowTypeMedial || rowType == JGActionSheetButtonRowTypeFinal) {
+        UIView * rule = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 400, 1)];
+        rule.backgroundColor = [UIColor colorWithRed:0.871 green:0.871 blue:0.886 alpha:1];
+        [b addSubview:rule];
+    }
+    
     b.layer.masksToBounds = YES;
-    b.layer.borderWidth = 1.0f;
     
     [b setTitle:title forState:UIControlStateNormal];
     
@@ -422,14 +436,14 @@ static BOOL disableCustomEasing = NO;
     return b;
 }
 
-- (void)buttonPressed:(JGButton *)button {
+- (void)buttonPressed:(UIButton *)button {
     if (self.buttonPressedBlock) {
-        self.buttonPressedBlock([NSIndexPath indexPathForRow:(NSInteger)button.row inSection:(NSInteger)self.index]);
+        self.buttonPressedBlock([NSIndexPath indexPathForRow:button.tag inSection:self.tag]);
     }
 }
 
 - (CGRect)layoutForWidth:(CGFloat)width {
-    CGFloat buttonHeight = 40.0f;
+    CGFloat buttonHeight = 50.0f;
     CGFloat spacing = kSpacing;
     
     CGFloat height = 0.0f;
@@ -468,9 +482,8 @@ static BOOL disableCustomEasing = NO;
     }
     
     for (UIButton *button in self.buttons) {
-        height += spacing;
         
-        button.frame = (CGRect){{spacing, height}, {width-spacing*2.0f, buttonHeight}};
+        button.frame = (CGRect){{0, height}, {width, buttonHeight}};
         
         height += buttonHeight;
     }
@@ -481,12 +494,14 @@ static BOOL disableCustomEasing = NO;
         self.contentView.frame = (CGRect){{spacing, height}, {width-spacing*2.0f, self.contentView.frame.size.height}};
         
         height += CGRectGetHeight(self.contentView.frame);
+        height += spacing;
+    } else if (self.buttons.count == 0) {
+        height += spacing;
     }
     
-    height += spacing;
     
     self.frame = (CGRect){CGPointZero, {width, height}};
-    
+    self.layer.masksToBounds = YES;
     return self.frame;
 }
 
@@ -559,7 +574,7 @@ static BOOL disableCustomEasing = NO;
         };
         
         for (JGActionSheetSection *section in self.sections) {
-            section.index = index;
+            section.tag = index;
             
             [_scrollView addSubview:section];
             
@@ -750,7 +765,7 @@ static BOOL disableCustomEasing = NO;
         }
     };
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationChanged) name:UIApplicationDidChangeStatusBarFrameNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationChanged) name:UIDeviceOrientationDidChangeNotification object:nil];
     
     [self layoutForVisible:!animated];
     
@@ -819,7 +834,7 @@ static BOOL disableCustomEasing = NO;
         }
     };
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationChanged) name:UIApplicationDidChangeStatusBarFrameNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationChanged) name:UIDeviceOrientationDidChangeNotification object:nil];
     
     [self layoutForVisible:!animated];
     
