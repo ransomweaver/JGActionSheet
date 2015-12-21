@@ -366,23 +366,23 @@ static BOOL disableCustomEasing = NO;
     UIFont *font = nil;
     
     if (buttonStyle == JGActionSheetButtonStyleDefault) {
-        font = [UIFont systemFontOfSize:15.0f];
-        titleColor = [UIColor blueColor];
+        font = [UIFont systemFontOfSize:20.0f];
+        titleColor = [UIColor darkGrayColor];
         
         backgroundColor = [UIColor whiteColor];
         borderColor = [UIColor clearColor];
-        highlightColor = [UIColor colorWithRed:0.988 green:0.902 blue:0.902 alpha:1];
+        highlightColor = [UIColor colorWithRed:240.0/255.0 green:240.0/255.0 blue:240.0/255.0 alpha:1.0];
     }
     else if (buttonStyle == JGActionSheetButtonStyleCancel) {
-        font = [UIFont boldSystemFontOfSize:15.0f];
-        titleColor = [UIColor blueColor];
+        font = [UIFont boldSystemFontOfSize:21.0f];
+        titleColor = [UIColor colorWithRed:0.0 green:122.0/255.0 blue:1.0 alpha:1.0];
         
         backgroundColor = [UIColor whiteColor];
         borderColor = [UIColor clearColor];
-        highlightColor = [UIColor colorWithRed:0.988 green:0.902 blue:0.902 alpha:1];
+        highlightColor = [UIColor colorWithRed:240.0/255.0 green:240.0/255.0 blue:240.0/255.0 alpha:1.0];
     }
     else if (buttonStyle == JGActionSheetButtonStyleRed) {
-        font = [UIFont systemFontOfSize:15.0f];
+        font = [UIFont systemFontOfSize:20.0f];
         titleColor = [UIColor whiteColor];
         
         backgroundColor = rgb(231.0f, 76.0f, 60.0f);
@@ -390,7 +390,7 @@ static BOOL disableCustomEasing = NO;
         highlightColor = borderColor;
     }
     else if (buttonStyle == JGActionSheetButtonStyleGreen) {
-        font = [UIFont systemFontOfSize:15.0f];
+        font = [UIFont systemFontOfSize:20.0f];
         titleColor = [UIColor whiteColor];
         
         backgroundColor = rgb(46.0f, 204.0f, 113.0f);
@@ -398,7 +398,7 @@ static BOOL disableCustomEasing = NO;
         highlightColor = borderColor;
     }
     else if (buttonStyle == JGActionSheetButtonStyleBlue) {
-        font = [UIFont systemFontOfSize:15.0f];
+        font = [UIFont systemFontOfSize:20.0f];
         titleColor = [UIColor whiteColor];
         
         backgroundColor = rgb(52.0f, 152.0f, 219.0f);
@@ -420,8 +420,8 @@ static BOOL disableCustomEasing = NO;
     UIButton *b = [UIButton buttonWithType:UIButtonTypeCustom];
     
     if (rowType == JGActionSheetButtonRowTypeMedial || rowType == JGActionSheetButtonRowTypeFinal) {
-        UIView * rule = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 400, 1)];
-        rule.backgroundColor = [UIColor colorWithRed:0.871 green:0.871 blue:0.886 alpha:1];
+        UIView * rule = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 400, 0.7)];
+        rule.backgroundColor = [UIColor colorWithRed:240.0/255.0 green:240.0/255.0 blue:240.0/255.0 alpha:1.0];
         [b addSubview:rule];
     }
     
@@ -443,7 +443,7 @@ static BOOL disableCustomEasing = NO;
 }
 
 - (CGRect)layoutForWidth:(CGFloat)width {
-    CGFloat buttonHeight = 50.0f;
+    CGFloat buttonHeight = 70.0f;
     CGFloat spacing = kSpacing;
     
     CGFloat height = 0.0f;
@@ -546,7 +546,7 @@ static BOOL disableCustomEasing = NO;
         tap.delegate = self;
         
         [self addGestureRecognizer:tap];
-
+        
         fullWidthiPad = NO;
         iPadWidth = 0;
         
