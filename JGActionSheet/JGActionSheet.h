@@ -32,10 +32,16 @@ typedef NS_ENUM(NSUInteger, JGActionSheetArrowDirection) {
     JGActionSheetArrowDirectionBottom,
 };
 
-
-
-
-
+/**
+ Button row types
+ @sa JGActionSheetSection.
+ */
+typedef NS_ENUM(NSUInteger, JGActionSheetButtonRowType) {
+    JGActionSheetButtonRowTypeSolitary,
+    JGActionSheetButtonRowTypeInitial,
+    JGActionSheetButtonRowTypeMedial,
+    JGActionSheetButtonRowTypeFinal,
+};
 
 
 /**
