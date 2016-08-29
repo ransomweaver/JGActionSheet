@@ -366,18 +366,18 @@ static BOOL disableCustomEasing = NO;
     UIFont *font = nil;
     
     if (buttonStyle == JGActionSheetButtonStyleDefault) {
-        font = [UIFont systemFontOfSize:20.0f];
-        titleColor = [UIColor darkGrayColor];
+        font = [UIFont boldSystemFontOfSize:19.0f];
+        titleColor = rgb(1.0f, 106.0f, 224.0f);//[UIColor darkGrayColor];
         
         backgroundColor = [UIColor whiteColor];
         borderColor = [UIColor clearColor];
         highlightColor = [UIColor colorWithRed:240.0/255.0 green:240.0/255.0 blue:240.0/255.0 alpha:1.0];
     }
     else if (buttonStyle == JGActionSheetButtonStyleCancel) {
-        font = [UIFont boldSystemFontOfSize:21.0f];
-        titleColor = [UIColor colorWithRed:0.0 green:122.0/255.0 blue:1.0 alpha:1.0];
+        font = [UIFont systemFontOfSize:19.0f];
+        titleColor = [UIColor grayColor];//[UIColor colorWithRed:0.0 green:122.0/255.0 blue:1.0 alpha:1.0];
         
-        backgroundColor = [UIColor whiteColor];
+        backgroundColor = rgb(240.0f, 240.0f, 240.0f);//[UIColor whiteColor];
         borderColor = [UIColor clearColor];
         highlightColor = [UIColor colorWithRed:240.0/255.0 green:240.0/255.0 blue:240.0/255.0 alpha:1.0];
     }
@@ -599,7 +599,7 @@ static BOOL disableCustomEasing = NO;
 
 - (void)setBackgroundColor:(UIColor *)backgroundColor {
     [super setBackgroundColor:backgroundColor];
-    _realBGColor = backgroundColor;
+    _realBGColor = [UIColor colorWithRed:(0.0) green:(0.0) blue:(0.0) alpha:0.7] ;//backgroundColor;
 }
 
 #pragma mark Callbacks
